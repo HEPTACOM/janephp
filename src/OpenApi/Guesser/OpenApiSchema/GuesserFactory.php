@@ -11,11 +11,12 @@ class GuesserFactory
     public static function create(SerializerInterface $serializer, array $options = []): ChainGuesser
     {
         $naming = new Naming();
-        $dateFormat = isset($options['date-format']) ? $options['date-format'] : \DateTime::RFC3339;
+        $outputDateFormat = isset($options['date-format']) ? $options['date-format'] : \DateTime::RFC3339;
+        $inputDateFormat = isset($options['date-input-format']) ? $options['date-input-format'] : null;
 
         $chainGuesser = new ChainGuesser();
         $chainGuesser->addGuesser(new SecurityGuesser());
-        $chainGuesser->addGuesser(new DateTimeGuesser($dateFormat));
+        $chainGuesser->addGuesser(new DateTimeGuesser($outputDateFormat, $inputDateFormat));
         $chainGuesser->addGuesser(new ReferenceGuesser($serializer));
         $chainGuesser->addGuesser(new OpenApiGuesser($serializer));
         $chainGuesser->addGuesser(new SchemaGuesser($naming, $serializer));
