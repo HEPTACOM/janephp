@@ -12,10 +12,11 @@ class GuesserFactory
     {
         $naming = new Naming();
         $dateFormat = isset($options['date-format']) ? $options['date-format'] : \DateTime::RFC3339;
+        $datePreferInterface = isset($options['date-prefer-interface']) ? $options['date-prefer-interface'] : null;
 
         $chainGuesser = new ChainGuesser();
         $chainGuesser->addGuesser(new SecurityGuesser());
-        $chainGuesser->addGuesser(new DateTimeGuesser($dateFormat));
+        $chainGuesser->addGuesser(new DateTimeGuesser($dateFormat, $datePreferInterface));
         $chainGuesser->addGuesser(new ReferenceGuesser($serializer));
         $chainGuesser->addGuesser(new OpenApiGuesser());
         $chainGuesser->addGuesser(new SchemaGuesser($naming, $serializer));

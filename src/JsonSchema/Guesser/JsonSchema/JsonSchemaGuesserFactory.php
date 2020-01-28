@@ -16,8 +16,9 @@ class JsonSchemaGuesserFactory
         $naming = new Naming();
         $merger = new JsonSchemaMerger();
         $dateFormat = isset($options['date-format']) ? $options['date-format'] : \DateTime::RFC3339;
+        $datePreferInterface = isset($options['date-prefer-interface']) ? $options['date-prefer-interface'] : null;
 
-        $chainGuesser->addGuesser(new DateTimeGuesser($dateFormat));
+        $chainGuesser->addGuesser(new DateTimeGuesser($dateFormat, $datePreferInterface));
         $chainGuesser->addGuesser(new SimpleTypeGuesser());
         $chainGuesser->addGuesser(new ArrayGuesser());
         $chainGuesser->addGuesser(new MultipleGuesser());
