@@ -40,11 +40,22 @@ EOD
             )];
         }
 
+        $jsonSerialize = new Stmt\ClassMethod(new Node\Identifier('jsonSerialize'), [
+            'flags' => Stmt\Class_::MODIFIER_PUBLIC,
+            'returnType' => new Node\Identifier('array'),
+            'stmts' => [
+                new Stmt\Return_(new Node\Expr\FuncCall(new Node\Name('get_object_vars'), [
+                    new Node\Arg(new Node\Expr\Variable('this')),
+                ])),
+            ],
+        ]);
+
         return new Stmt\Class_(
             new Name($this->getNaming()->getClassName($name)),
             [
-                'stmts' => array_merge($properties, $methods),
+                'stmts' => array_merge($properties, $methods, [$jsonSerialize]),
                 'extends' => $classExtends,
+                'implements' => [new Node\Name('\JsonSerializable')],
             ],
             $attributes
         );
