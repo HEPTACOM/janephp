@@ -50,10 +50,49 @@ EOD
             ],
         ]);
 
+        $setState = new Stmt\ClassMethod(new Node\Identifier('__set_state'), [
+            'flags' => Stmt\Class_::MODIFIER_PUBLIC | Stmt\Class_::MODIFIER_STATIC,
+            'returnType' => new Node\Identifier('object'),
+            'params' => [
+                new Node\Param(
+                    new Node\Expr\Variable('state'),
+                    null,
+                    new Node\Identifier('array')
+                ),
+            ],
+            'stmts' => [
+                new Stmt\Expression(
+                    new Node\Expr\Assign(
+                        new Node\Expr\Variable('result'),
+                        new Node\Expr\New_(new Node\Name('static'))
+                    ),
+                ),
+                new Stmt\Foreach_(
+                    new Node\Expr\Variable('state'),
+                    new Node\Expr\Variable('value'),
+                    [
+                        'keyVar' => new Node\Expr\Variable('key'),
+                        'stmts' => [
+                            new Stmt\Expression(
+                                new Node\Expr\Assign(
+                                    new Node\Expr\PropertyFetch(
+                                        new Node\Expr\Variable('result'),
+                                        new Node\Expr\Variable('key')
+                                    ),
+                                    new Node\Expr\Variable('value')
+                                )
+                            ),
+                        ],
+                    ]
+                ),
+                new Stmt\Return_(new Node\Expr\Variable('result')),
+            ],
+        ]);
+
         return new Stmt\Class_(
             new Name($this->getNaming()->getClassName($name)),
             [
-                'stmts' => array_merge($properties, $methods, [$jsonSerialize]),
+                'stmts' => array_merge($properties, $methods, [$jsonSerialize, $setState]),
                 'extends' => $classExtends,
                 'implements' => [new Node\Name('\JsonSerializable')],
             ],
